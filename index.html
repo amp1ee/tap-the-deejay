@@ -1,10 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>TapTheDJ</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
 <body>
   <div id="app">
     <h1>TapTheDJ</h1>
@@ -17,10 +12,133 @@
     <div id="history"></div>
   </div>
 
-  <script type="module" src="./model/tap-dj_model.js"></script>
-  <script type="module" src="./view/tap-dj_view.js"></script>
-  <script type="module" src="./controller/tap-dj_controller.js"></script>
-  <script type="module" src="./tap-the-deejay.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tap The DJ - BPM Counter</title>
+    <!-- Load the MVC modules -->
+    <script type="module" src="./model/tap-dj_model.js"></script>
+    <script type="module" src="./view/tap-dj_view.js"></script>
+    <script type="module" src="./controller/tap-dj_controller.js"></script>
+    <script type="module" src="./tap-the-deejay.js"></script>
+    <!-- Load Tailwind CSS from CDN for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Configure Tailwind for custom colors and font -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#4F46E5', // Indigo-600
+                        'secondary': '#10B981', // Emerald-500
+                        'dark-bg': '#111827', // Gray-900
+                        'card-bg': '#1F2937', // Gray-800
+                        'text-light': '#F3F4F6', // Gray-100
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Roboto Mono', 'monospace'],
+                    },
+                    keyframes: {
+                        tapFlash: {
+                            '0%, 100%': { transform: 'scale(1)', backgroundColor: '#4F46E5' },
+                            '50%': { transform: 'scale(1.05)', backgroundColor: '#10B981' },
+                        }
+                    },
+                    animation: {
+                        tapFlash: 'tapFlash 0.15s ease-out',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Load Inter font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Ensures the whole page takes up the viewport height */
+        body {
+            min-height: 100vh;
+            background-color: theme('colors.dark-bg');
+            color: theme('colors.text-light');
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Custom style for the tap button feedback */
+        #tapButton.flash {
+            animation: tapFlash 0.15s ease-out;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 flex flex-col items-center justify-center">
+
+    <!-- Main Application Container -->
+    <div id="app" class="w-full max-w-4xl space-y-8">
+
+        <h1 class="text-4xl md:text-5xl font-extrabold text-center text-primary tracking-tight">
+            Tap The DJ
+        </h1>
+        <p class="text-center text-gray-400 text-lg">
+            Tap the button (or press **SPACE**) to calculate the BPM.
+        </p>
+
+        <!-- Main Display & Tap Area -->
+        <div class="flex flex-col md:flex-row gap-6">
+
+            <!-- 1. BPM Display Card (Large) -->
+            <div class="flex-1 bg-card-bg p-6 md:p-10 rounded-xl shadow-2xl transition-all hover:shadow-primary/30 border-2 border-primary/50">
+                <p class="text-lg uppercase text-gray-400 font-semibold mb-2">Current Tempo</p>
+                <div class="flex items-end justify-between">
+                    <span id="bpmDisplay" class="font-mono text-8xl md:text-9xl font-extrabold text-secondary leading-none transition-transform duration-300">
+                        0.00
+                    </span>
+                    <span class="text-3xl font-bold text-gray-500 pb-2">BPM</span>
+                </div>
+            </div>
+
+            <!-- 2. Durations Card (Breakdowns) -->
+            <div class="w-full md:w-80 bg-card-bg p-6 rounded-xl shadow-xl border border-gray-700/50">
+                <h2 class="text-xl font-bold mb-4 text-primary">Timing Breakdown</h2>
+
+                <div id="durationsDisplay" class="space-y-3 font-mono text-text-light">
+                    <!-- Duration data will be populated here by JavaScript -->
+                    <div class="flex justify-between items-center text-sm">
+                        <span>1 Beat:</span>
+                        <span class="text-secondary font-bold" data-duration-key="beat">0 ms</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span>1 Bar (4 beats):</span>
+                        <span class="text-secondary font-bold" data-duration-key="bar">0 ms</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span>8 Bars:</span>
+                        <span class="text-secondary font-bold" data-duration-key="8 bars">0 ms</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span>32 Bars:</span>
+                        <span class="text-secondary font-bold" data-duration-key="32 bars">0 ms</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tap Button and Reset Controls -->
+        <div class="flex flex-col md:flex-row gap-4 pt-4">
+
+            <!-- Tap Button (Primary Interaction) -->
+            <button id="tapButton" class="flex-1 transition-all duration-100 ease-out p-6 md:p-10 rounded-xl text-4xl font-bold tracking-wider uppercase shadow-2xl transform active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-secondary/50"
+                style="background-color: #4F46E5; color: white;">
+                TAP ME
+            </button>
+
+            <!-- Reset Button -->
+            <button id="resetButton" class="p-3 md:p-4 bg-gray-600 hover:bg-red-600 text-text-light font-semibold rounded-xl shadow-lg transition-colors duration-200 focus:outline-none focus:ring-4 focus:ring-red-500/50">
+                Reset
+            </button>
+        </div>
+
+    </div>
 </body>
 </html>
 

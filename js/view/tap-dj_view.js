@@ -1,62 +1,74 @@
-export default class TapDJView {
-  constructor(rootElement) {
-    // Create or select the main container for the app UI
-    this.root = rootElement || document.getElementById('app');
-    this.root.classList.add('tap-dj-view');
+/**
+ * TapDJView: Manages all user interface interactions and displays data.
+ * Interface Layer (V in MVC)
+ */
+export class TapDJView {
+    constructor() {
+        this.bpmDisplay = document.getElementById('bpmDisplay');
+        this.tapButton = document.getElementById('tapButton');
+        this.resetButton = document.getElementById('resetButton');
+        this.durationElements = {};
 
-    // --- Create UI elements ---
-    this.title = document.createElement('h1');
-    this.title.textContent = 'TapTheDJ 🪩';
+        // Map duration keys to their display elements
+        document.querySelectorAll('[data-duration-key]').forEach(el => {
+            const key = el.getAttribute('data-duration-key');
+            this.durationElements[key] = el;
+        });
+    }
 
-    this.bpmDisplay = document.createElement('div');
-    this.bpmDisplay.className = 'bpm-display';
-    this.bpmDisplay.textContent = '-- BPM';
+    /**
+     * Updates the main BPM display element.
+     * @param {number} bpm - The BPM value to display.
+     */
+    updateBPMDisplay(bpm) {
+        this.bpmDisplay.textContent = bpm.toFixed(2);
+    }
 
-    this.tapButton = document.createElement('button');
-    this.tapButton.className = 'tap-button';
-    this.tapButton.textContent = 'TAP';
+    /**
+     * Updates the timing breakdown list.
+     * @param {object} durations - Dictionary of durations (e.g., { beat: 500, bar: 2000 }).
+     */
+    updateDurations(durations) {
+        for (const key in this.durationElements) {
+            if (this.durationElements.hasOwnProperty(key)) {
+                const ms = durations[key];
+                this.durationElements[key].textContent = ms > 0 ? `${ms} ms` : '0 ms';
+            }
+        }
+    }
 
-    this.infoPanel = document.createElement('div');
-    this.infoPanel.className = 'info-panel';
-    this.infoPanel.innerHTML = `
-      <p>Press SPACE or click to tap the beat</p>
-      <p class="tap-count">Taps: 0</p>
-    `;
+    /**
+     * Provides a quick visual feedback flash on the tap button.
+     */
+    flashTap() {
+        this.tapButton.classList.add('flash');
+        // Remove the class after the animation completes
+        this.tapButton.addEventListener('animationend', () => {
+            this.tapButton.classList.remove('flash');
+        }, { once: true });
+    }
 
-    this.root.append(
-      this.title,
-      this.bpmDisplay,
-      this.tapButton,
-      this.infoPanel
-    );
+    /**
+     * Binds the tap handler function to the button click and key press (SPACE/Enter).
+     * @param {function} handler - The function in the Controller to call on tap.
+     */
+    bindTap(handler) {
+        this.tapButton.addEventListener('click', handler);
 
-    this.onTap = null;
-    this.onReset = null;
+        document.addEventListener('keydown', (e) => {
+            // Check for Space or Enter key
+            if (e.code === 'Space' || e.key === 'Enter') {
+                e.preventDefault(); // Prevent scrolling on spacebar
+                handler();
+            }
+        });
+    }
 
-    this.tapButton.addEventListener('click', () => {
-      if (this.onTap) this.onTap();
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.code === 'Space') {
-        e.preventDefault();
-        if (this.onTap) this.onTap();
-      }
-    });
-  }
-
-  updateBPM(bpm) {
-    this.bpmDisplay.textContent = bpm ? `${bpm.toFixed(1)} BPM` : '-- BPM';
-  }
-
-  updateTapCount(count) {
-    const counter = this.infoPanel.querySelector('.tap-count');
-    counter.textContent = `Taps: ${count}`;
-  }
-
-  resetDisplay() {
-    this.updateBPM(null);
-    this.updateTapCount(0);
-  }
+    /**
+     * Binds the reset handler function to the reset button click.
+     * @param {function} handler - The function in the Controller to call on reset.
+     */
+    bindReset(handler) {
+        this.resetButton.addEventListener('click', handler);
+    }
 }
-
