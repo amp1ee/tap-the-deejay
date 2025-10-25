@@ -19,9 +19,12 @@ export default class TapDJView {
     /**
      * Updates the main BPM display element.
      * @param {number} bpm - The BPM value to display.
+     * @param {boolean} isDecimal - True to show decimals in BPM values.
      */
-    updateBPMDisplay(bpm) {
-        this.bpmDisplay.textContent = bpm.toFixed(2);
+    updateBPMDisplay(bpm, isDecimal) {
+        this.bpmDisplay.textContent = !isDecimal
+            ? bpm.toString()
+            : bpm.toFixed(2);
     }
 
     /**

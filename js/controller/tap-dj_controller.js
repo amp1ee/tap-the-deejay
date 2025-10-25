@@ -50,7 +50,7 @@ export default class TapDJController {
 
         this.model.reset();
         this.updateView();
-        console.log("App reset by controller.");
+        console.log("BPM has been reset by controller.");
     }
 
     /**
@@ -60,12 +60,19 @@ export default class TapDJController {
         let bpm = this.model.getBPM();
         const durations = this.model.getDurations();
 
-        const integerToggle = document.getElementById('bpm-integer-toggle');
-        if (integerToggle && integerToggle.checked) {
+        const decimalToggle = document.getElementById('bpm-decimal-toggle');
+        const decimalMode = decimalToggle.checked;
+
+        if (!decimalMode) {
+            // Integer mode
             bpm = Math.round(bpm);
+        } else {
+            // Show decimals
+            bpm = parseFloat(bpm.toFixed(2));
         }
 
-        this.view.updateBPMDisplay(bpm);
+        // Pass both BPM and the mode flag to the view
+        this.view.updateBPMDisplay(bpm, decimalMode);
         this.view.updateDurations(durations);
     }
 }
