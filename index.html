@@ -11,13 +11,13 @@
     <!-- Load Tailwind CSS from CDN for modern styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Configure Tailwind for custom colors and font -->
-    <script>
+<script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        'primary': '#002E2C', // Dark green
-                        'secondary': '#10B981', // Emerald-500
+                        'primary': '#054A33',
+                        'secondary': '#10B981', // Emerald-500 (BPM color)
                         'dark-bg': '#111827', // Gray-900
                         'card-bg': '#1F2937', // Gray-800
                         'text-light': '#F3F4F6', // Gray-100
@@ -28,12 +28,20 @@
                     },
                     keyframes: {
                         tapFlash: {
-                            '0%, 100%': { transform: 'scale(1)', backgroundColor: '#4F46E5' },
-                            '50%': { transform: 'scale(1.05)', backgroundColor: '#10B981' },
+                            // Flash animation uses the 'secondary' color
+                            '0%, 100%': { transform: 'scale(1)', backgroundColor: 'var(--tw-colors-primary)' },
+                            '50%': { transform: 'scale(1.05)', backgroundColor: 'var(--tw-colors-secondary)' },
+                        },
+                        // Background pulse keyframes now use HSL and the dynamic --hue variable
+                        bgPulse: {
+                            '0%': { boxShadow: 'inset 0 0 15px hsl(var(--hue, 120), 70%, 50%, 0.5)' },
+                            '50%': { boxShadow: 'inset 0 0 50px hsl(var(--hue, 120), 80%, 60%, 0.8)' },
+                            '100%': { boxShadow: 'inset 0 0 15px hsl(var(--hue, 120), 70%, 50%, 0.5)' },
                         }
                     },
                     animation: {
                         tapFlash: 'tapFlash 0.15s ease-out',
+                        bgPulse: 'bgPulse 0.3s ease-out', // Background pulse animation
                     }
                 }
             }

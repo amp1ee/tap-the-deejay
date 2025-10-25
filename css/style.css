@@ -1,11 +1,15 @@
 /* Ensures the whole page takes up the viewport height */
 body {
     min-height: 100vh;
-    background-color: theme('colors.dark-bg');
+    /*background-color: theme('colors.dark-bg');*/
+    /* Base shadow/glow uses the dynamic HUE variable */
+    box-shadow: inset 0 0 15px hsl(var(--hue), 70%, 50%, 0.5); 
+    transition: box-shadow 0.2s ease;
+
     color: theme('colors.text-light');
     font-family: 'Inter', sans-serif;
     /* Base shadow/glow for a club feel */
-    box-shadow: inset 0 0 15px rgba(16, 185, 129, 0.5); 
+    /* box-shadow: inset 0 0 15px rgba(16, 185, 129, 0.5); */
 }
 
 /* Custom style for the tap button feedback - needs dynamic color definitions in JS */

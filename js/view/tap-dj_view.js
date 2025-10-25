@@ -3,7 +3,9 @@
  * Interface Layer (V in MVC)
  */
 export default class TapDJView {
-    constructor() {
+    constructor(bodyElement) {
+        this.body = bodyElement;
+        this.currentHue = 120;
         this.bpmDisplay = document.getElementById('bpmDisplay');
         this.tapButton = document.getElementById('tapButton');
         this.resetButton = document.getElementById('resetButton');
@@ -47,6 +49,42 @@ export default class TapDJView {
     flashTap() {
         this.tapButton.classList.add('scale-95'); // Tailwind scale down
         setTimeout(() => this.tapButton.classList.remove('scale-95'), 150);
+    }
+
+    /**
+     * Provides visual feedback by pulsing the background.
+     */
+    flashBackground() {
+        // Set the dynamic hue for the flash animation to match the current mouse position
+        if (!this.body) {
+            console.log('[flashBackground()] this.body is undefined!')
+            return;
+        }
+        this.body.style.setProperty('--hue', this.currentHue);
+
+        this.body.classList.add('pulse-bg');
+        // Remove the class after the animation completes
+        this.body.addEventListener('animationend', (e) => {
+            if (e.animationName === 'bgPulse') {
+                this.body.classList.remove('pulse-bg');
+            }
+        }, { once: true });
+    }
+
+    /**
+     * Handles the mouse movement to dynamically change the global HUE CSS variable. (NEW)
+     * Maps mouse X position (0 to window.innerWidth) to a Hue value (0 to 360).
+     * @param {MouseEvent} e - The mouse event object.
+     */
+    handleMouseMove(e) {
+        const x = e.clientX;
+        const width = window.innerWidth;
+        // Map X position (0 to width) to Hue (0 to 360)
+        const hue = Math.floor((x / width) * 360);
+        this.currentHue = hue;
+        
+        // Update the CSS variable on the body for a smooth, static background glow change
+        this.body.style.setProperty('--hue', hue);
     }
 
     /**
