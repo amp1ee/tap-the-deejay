@@ -42,13 +42,11 @@ export default class TapDJView {
 
     /**
      * Provides a quick visual feedback flash on the tap button.
+     * Tailwind scale effect.
      */
     flashTap() {
-        this.tapButton.classList.add('flash');
-        // Remove the class after the animation completes
-        this.tapButton.addEventListener('animationend', () => {
-            this.tapButton.classList.remove('flash');
-        }, { once: true });
+        this.tapButton.classList.add('scale-95'); // Tailwind scale down
+        setTimeout(() => this.tapButton.classList.remove('scale-95'), 150);
     }
 
     /**
@@ -56,12 +54,13 @@ export default class TapDJView {
      * @param {function} handler - The function in the Controller to call on tap.
      */
     bindTap(handler) {
+        // Mouse click
         this.tapButton.addEventListener('click', handler);
 
-        document.addEventListener('keydown', (e) => {
-            // Check for Space or Enter key
-            if (e.code === 'Space' || e.key === 'Enter') {
-                e.preventDefault(); // Prevent scrolling on spacebar
+        // Keyboard: Space or Enter
+        this.tapButton.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' || e.code === 'Enter') {
+                e.preventDefault(); // Prevent scrolling or form submission
                 handler();
             }
         });

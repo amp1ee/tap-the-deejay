@@ -32,7 +32,7 @@ export default class TapDJController {
         this.idleTimer = setTimeout(this.handleReset.bind(this), this.IDLE_TIMEOUT_MS);
 
         // 2. Add tap to model
-        this.model.addTap(performance.now()); // Use performance.now() for high-res timing
+        this.model.addTap(performance.now()); // High-resolution timing
 
         // 3. Update the view
         this.updateView();
