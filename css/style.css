@@ -1,15 +1,18 @@
 /* Ensures the whole page takes up the viewport height */
 body {
     min-height: 100vh;
-    /*background-color: theme('colors.dark-bg');*/
-    /* Base shadow/glow uses the dynamic HUE variable */
-    box-shadow: inset 0 0 15px hsl(var(--hue), 70%, 50%, 0.5); 
-    transition: box-shadow 0.2s ease;
-
+    /* **FIX:** Force the dark background color (Gray-900) */
+    background-color: #111827 !important; 
+    
     color: theme('colors.text-light');
     font-family: 'Inter', sans-serif;
-    /* Base shadow/glow for a club feel */
-    /* box-shadow: inset 0 0 15px rgba(16, 185, 129, 0.5); */
+    
+    /* Initial Hue variable set to 120 (Emerald/Green) */
+    --hue: 120; 
+
+    /* Base shadow/glow uses the dynamic HUE variable */
+    box-shadow: inset 0 0 15px hsl(var(--hue), 70%, 50%, 0.5); 
+    transition: box-shadow 0.2s ease; /* Smooth transition for the static glow change */
 }
 
 /* Custom style for the tap button feedback - needs dynamic color definitions in JS */
