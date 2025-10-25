@@ -1,0 +1,23 @@
+/* Ensures the whole page takes up the viewport height */
+body {
+    min-height: 100vh;
+    background-color: theme('colors.dark-bg');
+    color: theme('colors.text-light');
+    font-family: 'Inter', sans-serif;
+    /* Base shadow/glow for a club feel */
+    box-shadow: inset 0 0 15px rgba(16, 185, 129, 0.5); 
+}
+
+/* Custom style for the tap button feedback - needs dynamic color definitions in JS */
+#tapButton.flash {
+    animation: tapFlash 0.15s ease-out;
+}
+
+/* Utility classes for dynamic hover states (explicitly defined for reliability) */
+.hover\:bg-indigo-600:hover { background-color: #4338CA; } /* Darker Indigo for hover on reset state */
+.hover\:bg-emerald-600:hover { background-color: #059669; } /* Darker Emerald for hover on calculated state */
+
+/* Class applied by JS on tap to trigger background animation */
+body.pulse-bg {
+    animation: bgPulse 0.3s ease-out;
+}

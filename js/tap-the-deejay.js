@@ -9,4 +9,4 @@ const controller = new TapDJController(model, view);
 view.bindTap(() => controller.handleTap());
 view.bindReset(() => controller.handleReset());
 
-view.updateBPM(model.getBPM());
+view.updateBPMDisplay(model.getBPM());

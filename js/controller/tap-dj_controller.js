@@ -10,7 +10,7 @@ export default class TapDJController {
         this.model = model;
         this.view = view;
         this.idleTimer = null;
-        this.IDLE_TIMEOUT_MS = 3000; // Auto-reset after 3 seconds of inactivity
+        this.IDLE_TIMEOUT_MS = 120000; // Auto-reset (ms) after a period of inactivity
     }
 
     /**
@@ -57,8 +57,13 @@ export default class TapDJController {
      * Fetches data from the model and pushes it to the view.
      */
     updateView() {
-        const bpm = this.model.getBPM();
+        let bpm = this.model.getBPM();
         const durations = this.model.getDurations();
+
+        const integerToggle = document.getElementById('bpm-integer-toggle');
+        if (integerToggle && integerToggle.checked) {
+            bpm = Math.round(bpm);
+        }
 
         this.view.updateBPMDisplay(bpm);
         this.view.updateDurations(durations);
