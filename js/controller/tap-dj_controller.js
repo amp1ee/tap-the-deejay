@@ -1,11 +1,11 @@
-import { TapDJModel } from '../model/tap-dj_model.js';
-import { TapDJView } from '../view/tap-dj_view.js';
+import TapDJModel from '../model/tap-dj_model.js';
+import TapDJView from '../view/tap-dj_view.js';
 
 /**
  * TapDJController: Orchestrates the flow between the Model and the View.
  * Application Glue (C in MVC)
  */
-export class TapDJController {
+export default class TapDJController {
     constructor(model, view) {
         this.model = model;
         this.view = view;

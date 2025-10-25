@@ -2,7 +2,7 @@
  * TapDJModel: Handles BPM calculation, tap storage, and duration breakdowns.
  * Core Logic & Data Layer (M in MVC)
  */
-export class TapDJModel {
+export default class TapDJModel {
   constructor() {
     // Stores timestamps of all taps in milliseconds
     this.taps = [];
@@ -104,4 +104,4 @@ export class TapDJModel {
   getBPM() {
     return this.currentBPM;
   }
-}
+};

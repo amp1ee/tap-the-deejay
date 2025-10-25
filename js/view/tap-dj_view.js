@@ -2,7 +2,7 @@
  * TapDJView: Manages all user interface interactions and displays data.
  * Interface Layer (V in MVC)
  */
-export class TapDJView {
+export default class TapDJView {
     constructor() {
         this.bpmDisplay = document.getElementById('bpmDisplay');
         this.tapButton = document.getElementById('tapButton');
