@@ -1,11 +1,26 @@
-!<!DOCTYPE html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Tap The DJ</title>
+  <meta charset="UTF-8">
+  <title>TapTheDJ</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <div id="app">
+    <h1>TapTheDJ</h1>
 
+    <div id="bpm-display">BPM: 0</div>
+
+    <button id="tap-button">Tap</button>
+    <button id="reset-button">Reset</button>
+
+    <div id="history"></div>
+  </div>
+
+  <script type="module" src="./model/tap-dj_model.js"></script>
+  <script type="module" src="./view/tap-dj_view.js"></script>
+  <script type="module" src="./controller/tap-dj_controller.js"></script>
+  <script type="module" src="./tap-the-deejay.js"></script>
 </body>
 </html>
+
