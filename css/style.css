@@ -1,30 +1,51 @@
-/* Ensures the whole page takes up the viewport height */
+/*
+ * style.css
+ * Custom styles for Tap The DJ, ensuring CSS precedence for dynamic effects.
+ */
+
+/* =======================================
+   GENERAL STYLES & BACKGROUND FIXES
+   ======================================= */
+
 body {
     min-height: 100vh;
-    /* **FIX:** Force the dark background color (Gray-900) */
+    /* CRITICAL FIX: Force the dark background color (#111827) with high precedence */
     background-color: #111827 !important; 
-    
-    color: theme('colors.text-light');
-    font-family: 'Inter', sans-serif;
-    
-    /* Initial Hue variable set to 120 (Emerald/Green) */
-    --hue: 120; 
-
-    /* Base shadow/glow uses the dynamic HUE variable */
-    box-shadow: inset 0 0 15px hsl(var(--hue), 70%, 50%, 0.5); 
-    transition: box-shadow 0.2s ease; /* Smooth transition for the static glow change */
+    /* Font and colors are inherited or set by Tailwind, but min-height is crucial */
 }
 
-/* Custom style for the tap button feedback - needs dynamic color definitions in JS */
+
+/* =======================================
+   DYNAMIC GLOW EFFECT (Applied to #app)
+   ======================================= */
+
+/* The class applied to the #app container */
+.dynamic-glow {
+    /* Initial Hue variable set to 120 (Emerald/Green) */
+    --hue: 120; 
+    
+    /* Base shadow/glow uses the dynamic HUE variable. We set the initial shadow to 0px
+       to prevent strange loading effects, relying entirely on the JS updates. */
+    box-shadow: inset 0 0 0px hsl(var(--hue), 70%, 50%, 0.5); 
+    transition: box-shadow 0.2s ease; 
+}
+
+/* Class applied by JS on tap to trigger the pulse animation */
+.dynamic-glow.pulse-bg {
+    /* Triggers the keyframes defined in Tailwind config in index.html */
+    animation: bgPulse 0.3s ease-out;
+}
+
+
+/* =======================================
+   BUTTON STYLES (Tap Flash)
+   ======================================= */
+
+/* Custom style for the tap button feedback (animation defined in Tailwind) */
 #tapButton.flash {
     animation: tapFlash 0.15s ease-out;
 }
 
-/* Utility classes for dynamic hover states (explicitly defined for reliability) */
-.hover\:bg-indigo-600:hover { background-color: #4338CA; } /* Darker Indigo for hover on reset state */
-.hover\:bg-emerald-600:hover { background-color: #059669; } /* Darker Emerald for hover on calculated state */
-
-/* Class applied by JS on tap to trigger background animation */
-body.pulse-bg {
-    animation: bgPulse 0.3s ease-out;
-}
+/* Explicitly defined for reliability due to dynamic class switching in JS */
+.hover\:bg-indigo-600:hover { background-color: #4338CA; } 
+.hover\:bg-emerald-600:hover { background-color: #059669; }

@@ -3,8 +3,8 @@
  * Interface Layer (V in MVC)
  */
 export default class TapDJView {
-    constructor(bodyElement) {
-        this.body = bodyElement;
+    constructor(appElement) {
+        this.app = appElement;
         this.currentHue = 120;
         this.bpmDisplay = document.getElementById('bpmDisplay');
         this.tapButton = document.getElementById('tapButton');
@@ -16,6 +16,16 @@ export default class TapDJView {
             const key = el.getAttribute('data-duration-key');
             this.durationElements[key] = el;
         });
+        this.styleTapButton('secondary');
+    }
+
+    styleTapButton(colorName) {
+        this.tapButton.classList.remove('bg-primary', 'hover:bg-emerald-600', 'bg-secondary', 'hover:bg-emerald-400');
+        if (colorName === 'secondary') {
+            this.tapButton.classList.add('bg-secondary', 'hover:bg-emerald-400');
+        } else {
+            this.tapButton.classList.add('bg-primary', 'hover:bg-emerald-200');
+        }
     }
 
     /**
@@ -55,36 +65,34 @@ export default class TapDJView {
      * Provides visual feedback by pulsing the background.
      */
     flashBackground() {
-        // Set the dynamic hue for the flash animation to match the current mouse position
-        if (!this.body) {
-            console.log('[flashBackground()] this.body is undefined!')
-            return;
-        }
-        this.body.style.setProperty('--hue', this.currentHue);
+        if (!this.app) return;
 
-        this.body.classList.add('pulse-bg');
-        // Remove the class after the animation completes
-        this.body.addEventListener('animationend', (e) => {
+        // Set the dynamic hue on the #app container
+        this.app.style.setProperty('--hue', this.currentHue);
+
+        this.app.classList.add('pulse-bg');
+        this.app.addEventListener('animationend', (e) => {
             if (e.animationName === 'bgPulse') {
-                this.body.classList.remove('pulse-bg');
+                this.app.classList.remove('pulse-bg');
             }
         }, { once: true });
     }
 
     /**
-     * Handles the mouse movement to dynamically change the global HUE CSS variable. (NEW)
+     * Handles the mouse movement to dynamically change the global HUE CSS variable.
      * Maps mouse X position (0 to window.innerWidth) to a Hue value (0 to 360).
      * @param {MouseEvent} e - The mouse event object.
      */
     handleMouseMove(e) {
+        if (!this.app) return;
+        
         const x = e.clientX;
         const width = window.innerWidth;
-        // Map X position (0 to width) to Hue (0 to 360)
         const hue = Math.floor((x / width) * 360);
         this.currentHue = hue;
         
-        // Update the CSS variable on the body for a smooth, static background glow change
-        this.body.style.setProperty('--hue', hue);
+        // Update the CSS variable on the #app container for the smooth static glow change
+        this.app.style.setProperty('--hue', hue);
     }
 
     /**

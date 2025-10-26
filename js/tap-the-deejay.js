@@ -2,11 +2,17 @@ import TapDJModel 		from './model/tap-dj_model.js';
 import TapDJView 		from './view/tap-dj_view.js';
 import TapDJController  from './controller/tap-dj_controller.js';
 
-const model = new TapDJModel();
-const view = new TapDJView(document.body);
-const controller = new TapDJController(model, view);
+// Application Entry Point
+window.onload = function() {
+	// Get the container element for the view
+    const appElement = document.getElementById('app');
 
-view.bindTap(() => controller.handleTap());
-view.bindReset(() => controller.handleReset());
+    // Instantiate the Model, View, and Controller
+    const tapModel = new TapDJModel();
 
-view.updateBPMDisplay(model.getBPM());
+    const tapView = new TapDJView(appElement); 
+    const tapController = new TapDJController(tapModel, tapView);
+
+    // Initialize the application
+    tapController.init();
+};
