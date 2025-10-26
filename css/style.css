@@ -19,20 +19,27 @@ body {
    DYNAMIC GLOW EFFECT (Applied to #app)
    ======================================= */
 
+/* CRITICAL: Define the animation keyframes outside of Tailwind config */
+@keyframes bgPulse {
+    /* Uses the dynamically set --hue variable */
+    0% { box-shadow: inset 0 0 15px hsl(var(--hue, 120), 70%, 50%, 0.5); }
+    50% { box-shadow: inset 0 0 50px hsl(var(--hue, 120), 80%, 60%, 0.8); }
+    100% { box-shadow: inset 0 0 15px hsl(var(--hue, 120), 70%, 50%, 0.5); }
+}
+
 /* The class applied to the #app container */
 .dynamic-glow {
     /* Initial Hue variable set to 120 (Emerald/Green) */
     --hue: 120; 
     
-    /* Base shadow/glow uses the dynamic HUE variable. We set the initial shadow to 0px
-       to prevent strange loading effects, relying entirely on the JS updates. */
-    box-shadow: inset 0 0 0px hsl(var(--hue), 70%, 50%, 0.5); 
-    transition: box-shadow 0.2s ease; 
+    /* CRITICAL FIX: Ensure box-shadow is visible so the browser processes the property for updates */
+    box-shadow: inset 0 0 15px hsl(var(--hue), 70%, 50%, 0.5); 
+    transition: box-shadow 0.2s ease; /* Transition for smooth mouse movement changes */
 }
 
 /* Class applied by JS on tap to trigger the pulse animation */
 .dynamic-glow.pulse-bg {
-    /* Triggers the keyframes defined in Tailwind config in index.html */
+    /* CRITICAL: Assign the animation duration and keyframes */
     animation: bgPulse 0.3s ease-out;
 }
 
@@ -41,7 +48,7 @@ body {
    BUTTON STYLES (Tap Flash)
    ======================================= */
 
-/* Custom style for the tap button feedback (animation defined in Tailwind) */
+/* Custom style for the tap button feedback (animation is defined in Tailwind config in index.html) */
 #tapButton.flash {
     animation: tapFlash 0.15s ease-out;
 }

@@ -5,12 +5,12 @@ import TapDJController  from './controller/tap-dj_controller.js';
 // Application Entry Point
 window.onload = function() {
 	// Get the container element for the view
-    const appElement = document.getElementById('app');
+    const bodyElement = document.getElementById('app');
 
     // Instantiate the Model, View, and Controller
     const tapModel = new TapDJModel();
 
-    const tapView = new TapDJView(appElement); 
+    const tapView = new TapDJView(bodyElement); 
     const tapController = new TapDJController(tapModel, tapView);
 
     // Initialize the application
