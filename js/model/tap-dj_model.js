@@ -93,7 +93,6 @@ export default class TapDJModel {
       '32 bars': Math.round(msPerBar * 32),
     };
 
-    // додатково — форматовані значення
     durations.formatted = {
       '16 bars': this.formatSeconds(msPerBar * 16),
       '32 bars': this.formatSeconds(msPerBar * 32),

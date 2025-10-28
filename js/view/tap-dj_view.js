@@ -49,7 +49,7 @@ export default class TapDJView {
                 const ms = durations[key];
                 const s = durations.formatted[key];
                 if (key == '16 bars' || key == '32 bars')
-                    this.durationElements[key].textContent = ms > 0 ? `${s} s` : '0 s';
+                    this.durationElements[key].textContent = ms > 0 ? `${s}` : '0 s';
                 else 
                     this.durationElements[key].textContent = ms > 0 ? `${ms} ms` : '0 ms';
             }
