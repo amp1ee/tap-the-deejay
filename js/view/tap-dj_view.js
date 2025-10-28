@@ -67,8 +67,11 @@ export default class TapDJView {
     flashBackground() {
         if (!this.app) return;
 
-        // Set the dynamic hue on the #app container
-        this.app.style.setProperty('--hue', this.currentHue);
+        // Set the dynamic hue for text/bg on the #app container
+        const hue = this.currentHue;
+        this.app.style.setProperty('--hue', hue);
+        this.app.style.setProperty('--dynamic-text', `hsl(${hue}, 80%, 90%)`);
+        this.app.style.setProperty('--dynamic-bg', `hsl(${hue}, 70%, 15%)`);
 
         this.app.classList.add('pulse-bg');
         this.app.addEventListener('animationend', (e) => {

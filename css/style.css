@@ -7,6 +7,12 @@
    GENERAL STYLES & BACKGROUND FIXES
    ======================================= */
 
+:root {
+    --hue: 120;
+    --dynamic-text: hsl(var(--hue), 80%, 90%);
+    --dynamic-bg: hsl(var(--hue), 70%, 15%);
+}
+
 body {
     min-height: 100vh;
     /* CRITICAL FIX: Force the dark background color (#111827) with high precedence */
@@ -14,6 +20,9 @@ body {
     /* Font and colors are inherited or set by Tailwind, but min-height is crucial */
 }
 
+#app {
+    color: var(--dynamic-text);
+}
 
 /* =======================================
    DYNAMIC GLOW EFFECT (Applied to #app)
@@ -29,9 +38,6 @@ body {
 
 /* The class applied to the #app container */
 .dynamic-glow {
-    /* Initial Hue variable set to 120 (Emerald/Green) */
-    --hue: 120; 
-    
     /* CRITICAL FIX: Ensure box-shadow is visible so the browser processes the property for updates */
     box-shadow: inset 0 0 15px hsl(var(--hue), 70%, 50%, 0.5); 
     transition: box-shadow 0.2s ease; /* Transition for smooth mouse movement changes */

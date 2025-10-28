@@ -21,6 +21,8 @@
                         'dark-bg': '#111827', // Gray-900
                         'card-bg': '#1F2937', // Gray-800
                         'text-light': '#F3F4F6', // Gray-100
+                        'primary-text': 'var(--dynamic-text)',
+                        // 'secondary-text': 'var(--secondary-text)',
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
@@ -36,9 +38,11 @@
                     animation: {
                         tapFlash: 'tapFlash 0.15s ease-out',
                     }
+
                 }
             }
-        }
+    	};
+
     </script>
     <!-- Load Inter font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -123,7 +127,7 @@
                         <span class="text-secondary font-bold" data-duration-key="beat">0 ms</span>
                     </div>
                     <div class="flex justify-between items-center text-sm">
-                        <span>1 Bar (4 beats):</span>
+                        <span>1 Bar:</span>
                         <span class="text-secondary font-bold" data-duration-key="bar">0 ms</span>
                     </div>
                     <div class="flex justify-between items-center text-sm">
