@@ -57,8 +57,18 @@ export default class TapDJModel {
   }
 
   /**
+   * Converts milliseconds into "S.ss s" format (seconds with two decimals).
+   * @param {number} ms
+   * @returns {string} e.g. "29.32 s"
+   */
+  formatSeconds(ms) {
+    const seconds = (ms / 1000).toFixed(2);
+    return `${seconds} s`;
+  }
+
+  /**
    * Generates a dictionary of useful song duration breakdowns based on the current BPM.
-   * @returns {object} A dictionary with duration keys (e.g., 'beat', 'bar', '32 bars') in milliseconds.
+   * @returns {object} A dictionary with both numeric and formatted duration keys.
    */
   getDurations() {
     if (this.currentBPM === 0) {
@@ -68,25 +78,28 @@ export default class TapDJModel {
         '8 bars': 0,
         '16 bars': 0,
         '32 bars': 0,
-        minute: 0
+        formatted: {}
       };
     }
 
-    // Milliseconds per beat
     const msPerBeat = 60000 / this.currentBPM;
-
-    // Assuming 4 beats per bar (standard time signature for dance music)
     const msPerBar = msPerBeat * 4;
 
-    return {
-      // Round to the nearest millisecond for timing precision
+    const durations = {
       beat: Math.round(msPerBeat),
       bar: Math.round(msPerBar),
       '8 bars': Math.round(msPerBar * 8),
       '16 bars': Math.round(msPerBar * 16),
       '32 bars': Math.round(msPerBar * 32),
-      minute: 60000 // 60,000 ms in 1 minute
     };
+
+    // додатково — форматовані значення
+    durations.formatted = {
+      '16 bars': this.formatSeconds(msPerBar * 16),
+      '32 bars': this.formatSeconds(msPerBar * 32),
+    };
+
+    return durations;
   }
 
   /**

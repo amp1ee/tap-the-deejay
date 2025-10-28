@@ -47,7 +47,11 @@ export default class TapDJView {
         for (const key in this.durationElements) {
             if (this.durationElements.hasOwnProperty(key)) {
                 const ms = durations[key];
-                this.durationElements[key].textContent = ms > 0 ? `${ms} ms` : '0 ms';
+                const s = durations.formatted[key];
+                if (key == '16 bars' || key == '32 bars')
+                    this.durationElements[key].textContent = ms > 0 ? `${s} s` : '0 s';
+                else 
+                    this.durationElements[key].textContent = ms > 0 ? `${ms} ms` : '0 ms';
             }
         }
     }
