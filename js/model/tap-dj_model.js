@@ -110,6 +110,16 @@ export default class TapDJModel {
   }
 
   /**
+   * Manually sets the current BPM (e.g., from user input).
+   * Does not alter tap history; subsequent taps will recalc as usual.
+   * @param {number} bpmValue
+   */
+  setBPM(bpmValue) {
+    if (typeof bpmValue !== 'number' || !isFinite(bpmValue) || bpmValue <= 0) return;
+    this.currentBPM = bpmValue;
+  }
+
+  /**
    * Returns the current calculated BPM.
    * @returns {number}
    */

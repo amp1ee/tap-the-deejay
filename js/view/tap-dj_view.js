@@ -7,6 +7,10 @@ export default class TapDJView {
         this.app = appElement;
         this.currentHue = 120;
         this.bpmDisplay = document.getElementById('bpmDisplay');
+        this.bpmDisplay.contentEditable = true;
+        this.bpmDisplay.spellcheck = false;
+        this.bpmDisplay.classList.add('cursor-text', 'outline-none', 'focus:ring-2', 'focus:ring-secondary/50');
+
         this.tapButton = document.getElementById('tapButton');
         this.resetButton = document.getElementById('resetButton');
         this.durationElements = {};
@@ -17,6 +21,40 @@ export default class TapDJView {
             this.durationElements[key] = el;
         });
         this.styleTapButton('secondary');
+    }
+
+    /**
+     * Binds manual BPM entry when user edits the BPM display directly.
+     * @param {function(number)} handler - Controller handler that receives the new BPM.
+     */
+    bindInlineBpmEdit(handler) {
+        if (!this.bpmDisplay) return;
+
+        const commit = () => {
+            const text = this.bpmDisplay.textContent.trim();
+            const bpmValue = parseFloat(text);
+            const prev = parseFloat(this.bpmDisplay.dataset.currentBpm || '0');
+
+            if (isNaN(bpmValue) || bpmValue <= 0) {
+                // Revert to last valid BPM if invalid
+                this.bpmDisplay.textContent = isNaN(prev) ? '0' : prev.toFixed(2);
+                return;
+            }
+
+            // Commit the valid BPM and update stored value
+            handler(bpmValue);
+            this.bpmDisplay.dataset.currentBpm = bpmValue.toFixed(2);
+        };
+
+        this.bpmDisplay.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                commit();
+                this.bpmDisplay.blur();
+            }
+        });
+
+        this.bpmDisplay.addEventListener('blur', commit);
     }
 
     styleTapButton(colorName) {

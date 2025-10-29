@@ -20,8 +20,17 @@ export default class TapDJController {
         this.view.bindTap(this.handleTap.bind(this));
         this.view.bindReset(this.handleReset.bind(this));
         window.addEventListener('mousemove', this.view.handleMouseMove.bind(this.view));
+        this.view.bindInlineBpmEdit(this.handleManualBpm.bind(this));
         this.updateView(); // Initial display update
         console.log("TapDJController initialized. Ready to tap!");
+    }
+
+    /**
+     * Handles manual BPM entry
+     */
+    handleManualBpm(bpmValue) {
+      this.model.setBPM(bpmValue);
+      this.updateView();
     }
 
     /**
