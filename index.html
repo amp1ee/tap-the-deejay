@@ -105,7 +105,7 @@
         <div class="flex flex-col md:flex-row gap-6">
 
             <!-- 1. BPM Display Card (Large) -->
-            <div class="flex-1 bg-card-bg p-6 md:p-10 rounded-xl shadow-2xl transition-all hover:shadow-primary/30 border-2 border-primary/50">
+            <div class="flex-1 bg-card-bg p-6 md:p-10 rounded-xl shadow-2xl transition-all hover:shadow-primary/30 border-2 border-primary/50" id="bpm-display-card">
                 <p class="text-lg uppercase text-gray-400 font-semibold mb-2">Current Tempo</p>
                 <div class="flex items-end justify-between">
                     <span id="bpmDisplay" class="font-mono text-8xl md:text-9xl font-extrabold text-secondary leading-none transition-transform duration-300">
@@ -129,14 +129,14 @@
 						></div>
 
 						<span class="ml-3 text-sm text-gray-400 peer-checked:text-emerald-300">
-						    Decimals
+						    Dec
 						</span>
 					</label>
                 </div>
             </div>
 
             <!-- 2. Durations Card (Breakdowns) -->
-            <div class="w-full md:w-80 bg-card-bg p-6 rounded-xl shadow-xl border border-gray-700/50">
+            <div class="w-full md:w-80 bg-card-bg p-6 rounded-xl shadow-xl border border-gray-700/50" id="durations-card">
                 <h2 class="text-xl font-bold mb-4 text-primary">Timing Breakdown</h2>
 
                 <div id="durationsDisplay" class="space-y-3 font-mono text-text-light">

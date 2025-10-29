@@ -14,9 +14,27 @@ body {
     /* Font and colors are inherited or set by Tailwind, but min-height is crucial */
 }
 
+/* Text selection highlighting */
+body {
+  user-select: none !important;
+}
+#durations-card,
+#bpm-display-card {
+  user-select: text !important;
+}
+
+/* Highlight on text selection */
+::selection {
+  background-color: #10B981; /* same as your 'secondary' */
+  color: white;
+}
+::-moz-selection {
+  background-color: #10B981;
+  color: white;
+}
 
 /* =======================================
-   DYNAMIC GLOW EFFECT (Applied to #app)
+   DYNAMIC GLOW EFFECT
    ======================================= */
 
 /* CRITICAL: Define the animation keyframes outside of Tailwind config */
