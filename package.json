@@ -1,0 +1,28 @@
+{
+  "name": "tap-the-deejay",
+  "version": "0.0.7",
+  "type": "module",
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "description": "A web-based tap BPM utility handy for any audio enthusiast worldwide.",
+  "main": "js/tap-the-deejay.js",
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amp1ee/tap-the-deejay.git"
+  },
+  "keywords": [],
+  "author": "Oleksii Amplee <djamply@gmail.com> (https://tapocheck.ai/)",
+  "license": "SEE LICENSE IN LICENSE",
+  "private": true,
+  "bugs": {
+    "url": "https://github.com/amp1ee/tap-the-deejay/issues"
+  },
+  "homepage": "https://github.com/amp1ee/tap-the-deejay#readme"
+}
