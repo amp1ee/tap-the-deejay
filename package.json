@@ -3,9 +3,10 @@
   "version": "0.0.7",
   "type": "module",
   "scripts": {
-    "test": "jest"
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "devDependencies": {
+    "cross-env": "^10.1.0",
     "jest": "^29.7.0"
   },
   "description": "A web-based tap BPM utility handy for any audio enthusiast worldwide.",
@@ -24,5 +25,9 @@
   "bugs": {
     "url": "https://github.com/amp1ee/tap-the-deejay/issues"
   },
-  "homepage": "https://github.com/amp1ee/tap-the-deejay#readme"
+  "homepage": "https://github.com/amp1ee/tap-the-deejay#readme",
+  "jest": {
+    "transform": {},
+    "testEnvironment": "node"
+  }
 }
