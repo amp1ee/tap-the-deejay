@@ -9,64 +9,65 @@ export default class TapDJController {
     constructor(model, view) {
         this.model = model;
         this.view = view;
-        this.idleTimer = null;
-        this.IDLE_TIMEOUT_MS = 120000; // Auto-reset (ms) after a period of inactivity
+
+        // --- Loading popup timer ---
+        this._loadingTimeout = null;
+
+        // --- Idle / reset timing ---
+        this._idleMs =
+            (this.model && (this.model.tapTimeoutMs || this.model.TAP_TIMEOUT_MS)) ||
+            2000;
+        this.IDLE_TIMEOUT_MS = this._idleMs || 3000;   // safe default
+        this.POPUP_TIMEOUT_MS = 1500;                  // hide popup sooner
     }
 
-    /**
-     * Initializes the controller, sets up event listeners, and initial view.
-     */
     init() {
+        // bind UI
         this.view.bindTap(this.handleTap.bind(this));
         this.view.bindReset(this.handleReset.bind(this));
         window.addEventListener('mousemove', this.view.handleMouseMove.bind(this.view));
         this.view.bindInlineBpmEdit(this.handleManualBpm.bind(this));
-        this.updateView(); // Initial display update
-        console.log("TapDJController initialized. Ready to tap!");
-    }
-
-    /**
-     * Handles manual BPM entry
-     */
-    handleManualBpm(bpmValue) {
-      this.model.setBPM(bpmValue);
-      this.updateView();
-    }
-
-    /**
-     * Handles a user tap event (mouse click or key press).
-     */
-    handleTap() {
-        // 1. Reset the idle timer
-        clearTimeout(this.idleTimer);
-        this.idleTimer = setTimeout(this.handleReset.bind(this), this.IDLE_TIMEOUT_MS);
-
-        // 2. Add tap to model
-        this.model.addTap(performance.now()); // High-resolution timing
-
-        // 3. Update the view
         this.updateView();
-
-        // 4. Provide visual feedback
-        this.view.flashTap();
-        this.view.flashBackground(); // Trigger background pulse
+        console.log('TapDJController initialized. Ready to tap!');
     }
 
-    /**
-     * Handles the reset event, clearing all data and view displays.
-     */
+    handleManualBpm(bpmValue) {
+        this.model.setBPM(bpmValue);
+        this.updateView();
+    }
+
+    handleTap() {
+        // restart idle-reset timer
+        clearTimeout(this.idleTimer);
+        this.idleTimer = setTimeout(() => this.handleReset(), this.IDLE_TIMEOUT_MS);
+
+        // register tap + update visuals
+        this.model.addTap(performance.now());
+        this.updateView();
+        this.view.flashTap();
+        this.view.flashBackground();
+
+        // --- videogame-style popup control ---
+        this.view.showLoading();
+        this.view.bumpLoading();
+
+        clearTimeout(this._loadingTimeout);
+        this._loadingTimeout = setTimeout(
+            () => this.view.hideLoading(),
+            this.POPUP_TIMEOUT_MS
+        );
+    }
+
     handleReset() {
         clearTimeout(this.idleTimer);
         this.idleTimer = null;
 
         this.model.reset();
+        this.view.hideLoading();
         this.updateView();
-        console.log("BPM has been reset by controller.");
+        console.log('BPM has been reset by controller.');
     }
 
-    /**
-     * Fetches data from the model and pushes it to the view.
-     */
     updateView() {
         let bpm = this.model.getBPM();
         const durations = this.model.getDurations();
@@ -74,15 +75,8 @@ export default class TapDJController {
         const decimalToggle = document.getElementById('bpm-decimal-toggle');
         const decimalMode = decimalToggle.checked;
 
-        if (!decimalMode) {
-            // Integer mode
-            bpm = Math.round(bpm);
-        } else {
-            // Show decimals
-            bpm = parseFloat(bpm.toFixed(2));
-        }
+        bpm = decimalMode ? parseFloat(bpm.toFixed(2)) : Math.round(bpm);
 
-        // Pass both BPM and the mode flag to the view
         this.view.updateBPMDisplay(bpm, decimalMode);
         this.view.updateDurations(durations);
     }

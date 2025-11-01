@@ -9,13 +9,44 @@ export default class TapDJView {
         this.bpmDisplay = document.getElementById('bpmDisplay');
         this.bpmDisplay.contentEditable = true;
         this.bpmDisplay.spellcheck = false;
-        this.bpmDisplay.classList.add('cursor-text', 'outline-none', 'focus:ring-2', 'focus:ring-secondary/50');
+        this.bpmDisplay.classList.add(
+            'cursor-text','outline-none','focus:ring-2','focus:ring-secondary/50'
+        );
 
         this.tapButton = document.getElementById('tapButton');
+        if (this.tapButton?.parentElement) {
+            this.tapButton.parentElement.classList?.add('relative');
+        }
+
+        // --- ① Create the loading popup dynamically ---
+        this.loadingPopup = document.createElement('div');
+        this.loadingPopup.id = 'loadingPopup';
+        this.loadingPopup.className = [
+            'absolute','left-1/2','-translate-x-1/2','bottom-[-3rem]',
+            'bg-black/80','backdrop-blur','text-secondary','text-xs','md:text-sm',
+            'px-3','py-2','rounded-xl','shadow-lg','ring-1','ring-secondary/30',
+            'flex','items-center','gap-2',
+            'opacity-0','pointer-events-none','transition-opacity','duration-300'
+        ].join(' ');
+
+        // --- ② Label + LED bar ---
+        this.loadingPopup.innerHTML = `
+          <span class="font-semibold tracking-wide">Computing&nbsp;BPM</span>
+          <div class="flex items-center gap-1">
+            <div class="grid grid-cols-8 gap-[2px] w-28 md:w-32 h-[6px] md:h-[7px] rounded">
+              ${Array.from({ length: 8 })
+                .map(() => '<div class="segment bg-white/10 rounded-[1px]"></div>')
+                .join('')}
+            </div>
+          </div>
+        `;
+        this.tapButton?.parentElement?.appendChild(this.loadingPopup);
+
+        // --- ③ Internal state ---
+        this._loadingTick = 0;
+
         this.resetButton = document.getElementById('resetButton');
         this.durationElements = {};
-
-        // Map duration keys to their display elements
         document.querySelectorAll('[data-duration-key]').forEach(el => {
             const key = el.getAttribute('data-duration-key');
             this.durationElements[key] = el;
@@ -41,7 +72,6 @@ export default class TapDJView {
                 return;
             }
 
-            // Commit the valid BPM and update stored value
             handler(bpmValue);
             this.bpmDisplay.dataset.currentBpm = bpmValue.toFixed(2);
         };
@@ -55,6 +85,37 @@ export default class TapDJView {
         });
 
         this.bpmDisplay.addEventListener('blur', commit);
+    }
+
+    // --- popup controls ---
+    showLoading() {
+        if (!this.loadingPopup) return;
+        this.loadingPopup.style.opacity = '1';
+        this.loadingPopup.style.pointerEvents = 'auto';
+    }
+
+    hideLoading() {
+        if (!this.loadingPopup) return;
+        this.loadingPopup.style.opacity = '0';
+        this.loadingPopup.style.pointerEvents = 'none';
+    }
+
+    bumpLoading() {
+        const segments = this.loadingPopup?.querySelectorAll('.segment');
+        if (!segments?.length) return;
+        this._loadingTick = (this._loadingTick + 1) % segments.length;
+        segments.forEach((el, i) => {
+            if (i === this._loadingTick) {
+                el.style.filter = 'brightness(1.8)';
+                el.style.background =
+                    'linear-gradient(90deg, rgba(16,185,129,0.9), rgba(255,255,255,0.7))';
+                el.style.boxShadow = '0 0 6px rgba(16,185,129,0.8)';
+            } else {
+                el.style.filter = 'brightness(1)';
+                el.style.background = 'rgba(255,255,255,0.10)';
+                el.style.boxShadow = 'none';
+            }
+        });
     }
 
     styleTapButton(colorName) {
