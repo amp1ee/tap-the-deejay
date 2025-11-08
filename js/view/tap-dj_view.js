@@ -9,12 +9,70 @@ export default class TapDJView {
         this.bpmDisplay = document.getElementById('bpmDisplay');
         this.bpmDisplay.contentEditable = true;
         this.bpmDisplay.spellcheck = false;
-        this.bpmDisplay.classList.add('cursor-text', 'outline-none', 'focus:ring-2', 'focus:ring-secondary/50');
+        this.bpmDisplay.classList.add(
+            'cursor-text','outline-none','focus:ring-2','focus:ring-secondary/50'
+        );
 
         this.tapButton = document.getElementById('tapButton');
+
+        // Ensure the tap button wrapper is relatively positioned for absolute popup placement
+        if (this.tapButton && this.tapButton.parentElement && this.tapButton.parentElement.classList) {
+            this.tapButton.parentElement.classList.add('relative');
+        }
+
+        // ---- Loading popup (videogame-style) ----
+        this.loadingPopup = document.createElement('div');
+        this.loadingPopup.id = 'loadingPopup';
+        this.loadingPopup.className = [
+            'absolute','left-1/2','-translate-x-1/2','bottom-[-3rem]',
+            'bg-black/80','backdrop-blur','text-secondary','text-xs','md:text-sm',
+            'px-3','py-2','rounded-xl','shadow-lg','ring-1','ring-secondary/30',
+            'opacity-0','pointer-events-none','select-none','transition-all','duration-200',
+            'flex','items-center','gap-2','z-20'
+        ].join(' ');
+
+        const label = document.createElement('span');
+        label.textContent = 'Loading…';
+        label.className = 'loading-label uppercase tracking-wider';
+
+        const percent = document.createElement('span');
+        percent.textContent = '0%';
+        percent.className = 'loading-percent text-secondary/80 font-mono';
+
+        this.loadingPopup.appendChild(label);
+        this.loadingPopup.appendChild(percent);
+
+        const bar = document.createElement('div');
+        bar.className = [
+            'grid','grid-cols-12','gap-[2px]',
+            'w-32','h-2','bg-white/5','rounded-full','overflow-hidden','ring-1','ring-white/10'
+        ].join(' ');
+
+        for (let i = 0; i < 12; i++) {
+            const seg = document.createElement('span');
+            seg.className = 'segment block w-full h-full rounded-[2px]';
+            seg.style.background = 'rgba(255,255,255,0.10)';
+            bar.appendChild(seg);
+        }
+
+        this.loadingPopup.appendChild(label);
+        this.loadingPopup.appendChild(bar);
+
+        // Attach the popup next to the tap button
+        if (this.tapButton && this.tapButton.parentElement) {
+            this.tapButton.parentElement.appendChild(this.loadingPopup);
+        } else {
+            // Fallback: append to body if structure changes
+            document.body.appendChild(this.loadingPopup);
+        }
+
+        // Internal pointer to animate segments
+        this._loadingTick = -1;
+
+        // <-------------------------------------------------->
         this.resetButton = document.getElementById('resetButton');
         this.durationElements = {};
-
+        
         // Map duration keys to their display elements
         document.querySelectorAll('[data-duration-key]').forEach(el => {
             const key = el.getAttribute('data-duration-key');
@@ -41,7 +99,6 @@ export default class TapDJView {
                 return;
             }
 
-            // Commit the valid BPM and update stored value
             handler(bpmValue);
             this.bpmDisplay.dataset.currentBpm = bpmValue.toFixed(2);
         };
@@ -55,6 +112,68 @@ export default class TapDJView {
         });
 
         this.bpmDisplay.addEventListener('blur', commit);
+    }
+
+    showLoading() {
+        if (!this.loadingPopup) return;
+        this.loadingPopup.style.opacity = '1';
+        this.loadingPopup.style.pointerEvents = 'auto';
+    }
+
+    hideLoading() {
+        if (!this.loadingPopup) return;
+        this.loadingPopup.style.opacity = '0';
+        this.loadingPopup.style.pointerEvents = 'none';
+    }
+
+    bumpLoading() {
+        const segments = this.loadingPopup?.querySelectorAll('.segment');
+        if (!segments || !segments.length) return;
+        this._loadingTick = (this._loadingTick + 1) % segments.length;
+        segments.forEach((el, i) => {
+            if (i === this._loadingTick) {
+                el.style.filter = 'brightness(1.8)';
+                el.style.background = 'linear-gradient(90deg, rgba(16,185,129,0.9), rgba(255,255,255,0.7))';
+                el.style.boxShadow = '0 0 6px rgba(16,185,129,0.8)';
+            } else {
+                el.style.filter = 'brightness(1)';
+                el.style.background = 'rgba(255,255,255,0.10)';
+                el.style.boxShadow = 'none';
+            }
+        });
+    }
+
+    // BPM/music related phrases to rotate between
+    _loadingPhrases = [
+      'Tuning decks…',
+      'Syncing groove…',
+      'Calibrating BPM…',
+      'Locking tempo…',
+      'Spinning vinyl…',
+      'Dropping the beat…',
+      'Cueing next bar…',
+      'Boosting bassline…',
+      'Pitch matching…',
+      'Firing LFOs…',
+      'Aligning downbeat…',
+      'Almost there, babe…',
+      'Awww yeahhh…'
+    ];
+
+    _loadingProgress = 0; // percentage
+    _loadingPhraseIndex = 0;
+
+    updateLoadingText() {
+      const label = this.loadingPopup?.querySelector('.loading-label');
+      const percent = this.loadingPopup?.querySelector('.loading-percent');
+      if (!label || !percent) return;
+
+      // Rotate phrase and progress
+      this._loadingPhraseIndex = (this._loadingPhraseIndex + 1) % this._loadingPhrases.length;
+      this._loadingProgress = ((this._loadingTick + 1) / 12) * 100;
+
+      label.textContent = this._loadingPhrases[this._loadingPhraseIndex];
+      percent.textContent = `${Math.floor(this._loadingProgress)}%`;
     }
 
     styleTapButton(colorName) {
