@@ -15,10 +15,9 @@ export default class TapDJController {
         this._loadingTimeout = null;    // popup auto-hide timer
 
         // ---- Timing configuration ----
-        // Prefer model-provided idle timeout if available, otherwise fall back to a small sane default.
-        this._idleMs = (this.model && (this.model.tapTimeoutMs || this.model.TAP_TIMEOUT_MS)) || 2000;
-        this.IDLE_TIMEOUT_MS = this._idleMs || 3000;
-        this.POPUP_TIMEOUT_MS = 1500;   // videogame-style popup should disappear sooner
+        this._idleMs = (this.model && (this.model.tapTimeoutMs || this.model.TAP_TIMEOUT_MS)) || 120000;
+        this.IDLE_TIMEOUT_MS = this._idleMs;   // 2 minutes idle reset
+        this.POPUP_TIMEOUT_MS = 1500;          // popup hides visually after 1.5 s
     }
 
     init() {
@@ -64,6 +63,11 @@ export default class TapDJController {
 
         this.model.reset();
         this.view.hideLoading();
+
+        // Reset progress & text state after full inactivity reset
+        this.view._loadingTick = -1;
+        this.view._loadingProgress = 0;
+        this.view._loadingPhraseIndex = 0;
 
         // Ensure popup is hidden and its timer cleared on reset
         if (this._loadingTimeout) {

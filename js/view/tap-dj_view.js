@@ -28,7 +28,7 @@ export default class TapDJView {
             'bg-black/80','backdrop-blur','text-secondary','text-xs','md:text-sm',
             'px-3','py-2','rounded-xl','shadow-lg','ring-1','ring-secondary/30',
             'opacity-0','pointer-events-none','select-none','transition-all','duration-200',
-            'flex','items-center','gap-2','z-20'
+            'flex','flex-col','items-center','gap-1','z-20','w-44','md:w-52','text-center'
         ].join(' ');
 
         const label = document.createElement('span');
@@ -146,17 +146,17 @@ export default class TapDJView {
     // BPM/music related phrases to rotate between
     _loadingPhrases = [
       'Tuning decks…',
-      'Syncing groove…',
-      'Calibrating BPM…',
-      'Locking tempo…',
       'Spinning vinyl…',
-      'Dropping the beat…',
-      'Cueing next bar…',
-      'Boosting bassline…',
-      'Pitch matching…',
+      'Syncing groove…',
+      'Locking tempo…',
       'Firing LFOs…',
+      'Calibrating BPM…',
+      'Boosting bassline…',
+      'Cueing next bar…',
+      'Vibing nicely…',
       'Aligning downbeat…',
       'Almost there, babe…',
+      'Dropping the beat…',
       'Awww yeahhh…'
     ];
 
@@ -168,12 +168,14 @@ export default class TapDJView {
       const percent = this.loadingPopup?.querySelector('.loading-percent');
       if (!label || !percent) return;
 
-      // Rotate phrase and progress
-      this._loadingPhraseIndex = (this._loadingPhraseIndex + 1) % this._loadingPhrases.length;
-      this._loadingProgress = ((this._loadingTick + 1) / 12) * 100;
+        // Use the current tick from bumpLoading(), don’t increment again
+        const currentTick = this._loadingTick >= 0 ? this._loadingTick : 0;
+        this._loadingProgress = ((currentTick + 1) / 12) * 100;
 
-      label.textContent = this._loadingPhrases[this._loadingPhraseIndex];
-      percent.textContent = `${Math.floor(this._loadingProgress)}%`;
+        this._loadingPhraseIndex = (this._loadingPhraseIndex + 1) % this._loadingPhrases.length;
+
+        label.textContent = this._loadingPhrases[this._loadingPhraseIndex];
+        percent.textContent = `${Math.floor(this._loadingProgress)}%`;
     }
 
     styleTapButton(colorName) {
