@@ -10,15 +10,15 @@ export default class TapDJController {
         this.model = model;
         this.view = view;
 
-        // --- Loading popup timer ---
-        this._loadingTimeout = null;
+        // ---- Timers ----
+        this.idleTimer = null;          // reset-on-idle timer
+        this._loadingTimeout = null;    // popup auto-hide timer
 
-        // --- Idle / reset timing ---
-        this._idleMs =
-            (this.model && (this.model.tapTimeoutMs || this.model.TAP_TIMEOUT_MS)) ||
-            2000;
-        this.IDLE_TIMEOUT_MS = this._idleMs || 3000;   // safe default
-        this.POPUP_TIMEOUT_MS = 1500;                  // hide popup sooner
+        // ---- Timing configuration ----
+        // Prefer model-provided idle timeout if available, otherwise fall back to a small sane default.
+        this._idleMs = (this.model && (this.model.tapTimeoutMs || this.model.TAP_TIMEOUT_MS)) || 2000;
+        this.IDLE_TIMEOUT_MS = this._idleMs || 3000;
+        this.POPUP_TIMEOUT_MS = 1500;   // videogame-style popup should disappear sooner
     }
 
     init() {
@@ -43,19 +43,19 @@ export default class TapDJController {
 
         // register tap + update visuals
         this.model.addTap(performance.now());
+
+        // ---- Videogame-like popup feedback ----
+        // Show and "tick" the loading bar on each tap
+        this.view.showLoading();
+        this.view.bumpLoading();
+        this.view.updateLoadingText();
+
+        if (this._loadingTimeout) clearTimeout(this._loadingTimeout);
+        this._loadingTimeout = setTimeout(() => this.view.hideLoading(), this.POPUP_TIMEOUT_MS);
+
         this.updateView();
         this.view.flashTap();
         this.view.flashBackground();
-
-        // --- videogame-style popup control ---
-        this.view.showLoading();
-        this.view.bumpLoading();
-
-        clearTimeout(this._loadingTimeout);
-        this._loadingTimeout = setTimeout(
-            () => this.view.hideLoading(),
-            this.POPUP_TIMEOUT_MS
-        );
     }
 
     handleReset() {
@@ -64,6 +64,13 @@ export default class TapDJController {
 
         this.model.reset();
         this.view.hideLoading();
+
+        // Ensure popup is hidden and its timer cleared on reset
+        if (this._loadingTimeout) {
+            clearTimeout(this._loadingTimeout);
+            this._loadingTimeout = null;
+        }
+
         this.updateView();
         console.log('BPM has been reset by controller.');
     }
