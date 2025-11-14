@@ -45,7 +45,7 @@ jobs:
           import fs from 'fs';
           import path from 'path';
 
-          const SRC_DIR = './src';
+          const SRC_DIR = './js';
           const OUT_DIR = './dist';
 
           function process(source, target) {
@@ -78,7 +78,7 @@ jobs:
           // Copy to dist/
           for (const item of fs.readdirSync('.')) {
               // Skip directories that must NOT be copied
-              if (['src', 'dist', 'node_modules', '.git', '.github'].includes(item)) continue;
+              if (['js', 'dist', 'node_modules', '.git', '.github'].includes(item)) continue;
 
               const stat = fs.lstatSync(item);
               const target = path.join(OUT_DIR, item);
@@ -90,7 +90,7 @@ jobs:
               }
           }
 
-          process(SRC_DIR, path.join(OUT_DIR, 'src'));
+          process(SRC_DIR, path.join(OUT_DIR, 'js'));
           EOF
 
       # Upload the final obfuscated build to Pages
