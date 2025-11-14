@@ -75,9 +75,11 @@ jobs:
               }
           }
 
-          // Copy everything except src/ into dist/
+          // Copy to dist/
           for (const item of fs.readdirSync('.')) {
-              if (['src', 'node_modules', '.git', '.github'].includes(item)) continue;
+              // Skip directories that must NOT be copied
+              if (['src', 'dist', 'node_modules', '.git', '.github'].includes(item)) continue;
+
               const stat = fs.lstatSync(item);
               const target = path.join(OUT_DIR, item);
 
