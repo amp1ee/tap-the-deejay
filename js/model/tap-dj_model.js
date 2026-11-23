@@ -31,7 +31,7 @@ export default class TapDJModel {
 
   /**
    * Calculates the Beats Per Minute (BPM) based on the stored tap intervals.
-   * Uses a rolling average of the last MAX_INTERVALS.
+   * Uses a rolling median/MAD filter before averaging accepted intervals.
    * @returns {number} The calculated BPM, rounded to two decimal places.
    */
   calculateBPM() {
@@ -46,9 +46,40 @@ export default class TapDJModel {
       intervals.push(interval);
     }
 
-    // 2. Compute the average interval in milliseconds
-    const sumOfIntervals = intervals.reduce((sum, interval) => sum + interval, 0);
-    const averageIntervalMs = sumOfIntervals / intervals.length;
+    // Ignore invalid intervals rather than allowing division by zero.
+    const valid = intervals.filter(value => Number.isFinite(value) && value > 0);
+    if (valid.length === 0) return 0;
+
+    const median = values => {
+      const sorted = [...values].sort((a, b) => a - b);
+      const middle = Math.floor(sorted.length / 2);
+      return sorted.length % 2
+        ? sorted[middle]
+        : (sorted[middle - 1] + sorted[middle]) / 2;
+    };
+
+    // A consistent run of three recent intervals indicates a deliberate
+    // tempo change, not three independent tapping mistakes.
+    let sample = valid;
+    if (valid.length >= 6) {
+      const recent = valid.slice(-3);
+      const previousMedian = median(valid.slice(0, -3));
+      const recentMedian = median(recent);
+      const recentMAD = median(recent.map(value => Math.abs(value - recentMedian)));
+      if (Math.abs(recentMedian - previousMedian) > 0.15 * previousMedian &&
+          recentMAD <= 0.05 * recentMedian &&
+          recent.every(value => Math.abs(value - recentMedian) <= 0.15 * recentMedian)) {
+        sample = recent;
+      }
+    }
+
+    // Robustly reject isolated missed beats and accidental double taps.
+    // The 15% floor avoids over-filtering when MAD is nearly zero.
+    const center = median(sample);
+    const mad = median(sample.map(value => Math.abs(value - center)));
+    const tolerance = Math.max(3 * 1.4826 * mad, 0.15 * center);
+    const accepted = sample.filter(value => Math.abs(value - center) <= tolerance);
+    const averageIntervalMs = accepted.reduce((sum, value) => sum + value, 0) / accepted.length;
 
     // 3. Convert the average interval (ms/beat) to BPM (beats/min)
     const calculatedBPM = 60000 / averageIntervalMs;
