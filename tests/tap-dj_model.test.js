@@ -34,6 +34,42 @@ describe('TapDJModel', () => {
     expect(model.taps.length).toBe(model.MAX_INTERVALS + 1);
   });
 
+  test('rejects a missed beat in a stable tempo', () => {
+    let time = 0;
+    model.addTap(time);
+    for (const interval of [344, 347, 342, 345, 690, 343, 346, 341, 345, 344]) {
+      time += interval;
+      model.addTap(time);
+    }
+    expect(model.getBPM()).toBeCloseTo(174, 0);
+  });
+
+  test('rejects an accidental double tap', () => {
+    let time = 0;
+    model.addTap(time);
+    for (const interval of [500, 501, 498, 500, 100, 499, 502, 500, 501, 499]) {
+      time += interval;
+      model.addTap(time);
+    }
+    expect(model.getBPM()).toBeCloseTo(120, 0);
+  });
+
+  test('adapts to three consistent intervals at a new tempo', () => {
+    let time = 0;
+    model.addTap(time);
+    for (const interval of [500, 500, 500, 500, 500, 500, 375, 375, 375]) {
+      time += interval;
+      model.addTap(time);
+    }
+    expect(model.getBPM()).toBe(160);
+  });
+
+  test('does not divide by zero for duplicate timestamps', () => {
+    model.addTap(100);
+    model.addTap(100);
+    expect(model.getBPM()).toBe(0);
+  });
+
   // --- formatSeconds() ---
   test('formats milliseconds to seconds with 2 decimals', () => {
     expect(model.formatSeconds(1530)).toBe('1.53 s');
